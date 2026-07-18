@@ -56,10 +56,13 @@ $barRect = New-Object System.Drawing.Rectangle(0, 0, $size, 14)
 $gradBrush = New-Object System.Drawing.Drawing2D.LinearGradientBrush($barRect, $raw, $accent, 0.0)
 $g.FillRectangle($gradBrush, $barRect)
 
+$HASHTAGS = "#직장인공감 #직장인밈 #오피스라이프 #퇴사각 #월급루팡 #상사잔소리"
+
 $mode = Get-Random -Minimum 0 -Maximum 2
 
 if ($mode -eq 0) {
   $quote = $QUOTES | Get-Random
+  $caption = "$quote 🙃`n`n상사 잔소리, 이제 순화해서 답장하세요.`n무료 · 회원가입 없음 · 링크는 프로필에 👆`n`n$HASHTAGS"
   $badgeFont = New-Object System.Drawing.Font("Consolas", 22, [System.Drawing.FontStyle]::Bold)
   $g.DrawString("직장인 공감", $badgeFont, (New-Object System.Drawing.SolidBrush($accent)), 70, 80)
 
@@ -74,6 +77,7 @@ if ($mode -eq 0) {
   }
 } else {
   $ex = $EXAMPLES | Get-Random
+  $caption = "상사가 `"$($ex.before)`"라고 하면... 저는 이렇게 답장해요:`n`"$($ex.after)`"`n`n잔소리 순화기, 무료로 써보세요.`n링크는 프로필에 👆`n`n$HASHTAGS"
   $badgeFont = New-Object System.Drawing.Font("Consolas", 20, [System.Drawing.FontStyle]::Bold)
   $g.DrawString("BEFORE -> AFTER", $badgeFont, (New-Object System.Drawing.SolidBrush($accent)), 70, 80)
 
@@ -116,5 +120,10 @@ $outPath = Join-Path $PSScriptRoot "카드뉴스_$timestamp.png"
 $bmp.Save($outPath, [System.Drawing.Imaging.ImageFormat]::Png)
 $g.Dispose()
 $bmp.Dispose()
-Write-Output $outPath
+
+$captionPath = Join-Path $PSScriptRoot "카드뉴스_$timestamp.txt"
+Set-Content -Path $captionPath -Value $caption -Encoding UTF8
+
+Write-Output "IMAGE: $outPath"
+Write-Output "CAPTION: $captionPath"
 
