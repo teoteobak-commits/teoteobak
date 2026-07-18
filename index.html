@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>잔소리 필터기</title>
+<style>
+  :root {
+    --bg: #0B0F0E;
+    --surface: #121815;
+    --surface-2: #1B231F;
+    --surface-3: #232C27;
+    --text: #ECF2EF;
+    --text-muted: #8FA098;
+    --accent: #4FD8A8;
+    --accent-strong: #2FB98C;
+    --accent-soft: rgba(79, 216, 168, 0.14);
+    --raw: #FF8A5C;
+    --raw-soft: rgba(255, 138, 92, 0.14);
+    --border: #26302B;
+    --shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", "Segoe UI", sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 20px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .hero { display: flex; flex-direction: column; gap: 10px; }
+
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font: 700 11px/1 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .tagline { margin: 0; color: var(--text-muted); font-size: 15px; max-width: 50ch; }
+
+  .filter-bar {
+    height: 5px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--raw) 0%, var(--surface-2) 48%, var(--accent) 100%);
+  }
+
+  section.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .input-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+
+  label[for="rawInput"] { font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; }
+
+  .tag-raw {
+    font: 700 10.5px/1 ui-monospace, Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+    padding: 3px 7px;
+    border-radius: 20px;
+    background: var(--raw-soft);
+    color: var(--raw);
+  }
+
+  .examples { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  button { font-family: inherit; border: none; cursor: pointer; color: var(--text); }
+  button:focus-visible, .chip:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .chip {
+    font: 600 12.5px/1 inherit;
+    padding: 7px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .chip:hover { border-color: var(--accent); }
+
+  textarea#rawInput {
+    width: 100%;
+    min-height: 140px;
+    resize: vertical;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font: 400 15px/1.6 inherit;
+  }
+  textarea#rawInput::placeholder { color: var(--text-muted); }
+
+  .input-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #06120D;
+    font-weight: 700;
+    font-size: 14.5px;
+    padding: 11px 20px;
+    border-radius: 10px;
+    transition: transform 0.08s ease, background 0.15s ease;
+  }
+  .btn-primary:hover { background: var(--accent-strong); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 11px 10px;
+  }
+  .btn-ghost:hover { color: var(--text); }
+
+  .btn-soft {
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .btn-soft:hover { border-color: var(--accent); }
+  .btn-soft.copied { color: var(--accent-strong); border-color: var(--accent); }
+
+  .empty-state { color: var(--text-muted); font-size: 14px; text-align: center; padding: 6px 0; }
+
+  .results { display: flex; flex-direction: column; gap: 16px; }
+  .results[hidden] { display: none; }
+
+  .diag-card { border-top: 3px solid var(--text-muted); }
+  .diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .diag-grid { grid-template-columns: 1fr; } }
+
+  .score-row { display: flex; align-items: baseline; justify-content: space-between; }
+  .score-label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+  .score-number { font: 800 26px/1 inherit; font-variant-numeric: tabular-nums; }
+  .score-track { height: 10px; border-radius: 6px; background: var(--surface-2); overflow: hidden; }
+  .score-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--accent), var(--raw));
+    transition: width 0.5s cubic-bezier(.2,.8,.2,1);
+  }
+  .score-scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
+
+  .type-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 13.5px;
+    width: fit-content;
+  }
+  .type-tip { font-size: 13px; color: var(--text-muted); }
+
+  .result-card { border-top: 3px solid var(--accent); }
+  .result-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .result-head h2 { margin: 0; font-size: 14.5px; font-weight: 700; }
+  .result-actions { display: flex; gap: 8px; }
+
+  .intensity-row { display: flex; gap: 6px; }
+  .intensity-btn {
+    flex: 1; text-align: center;
+    padding: 8px 6px; border-radius: 8px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+  }
+  .intensity-btn.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+  #softenOutput { margin: 0; font-size: 15.5px; white-space: pre-wrap; }
+
+  .compare-card { border-top: 3px solid var(--border); }
+  .compare-stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  @media (max-width: 560px) { .compare-stage { grid-template-columns: 1fr; } }
+  .compare-pane { padding: 16px; font-size: 14.5px; white-space: pre-wrap; }
+  .pane-raw { background: var(--raw-soft); }
+  .pane-soft { background: var(--accent-soft); border-left: 1px solid var(--border); }
+  @media (max-width: 560px) { .pane-soft { border-left: none; border-top: 1px solid var(--border); } }
+  .compare-label {
+    display: block; font: 700 10.5px/1 ui-monospace, Menlo, monospace; letter-spacing: 0.05em;
+    margin-bottom: 8px; text-transform: uppercase;
+  }
+  .pane-raw .compare-label { color: var(--raw); }
+  .pane-soft .compare-label { color: var(--accent); }
+
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .meta-chip {
+    font: 600 12px/1 inherit; padding: 5px 10px; border-radius: 20px;
+    background: var(--surface-2); color: var(--text); display: inline-flex; align-items: center; gap: 5px;
+  }
+
+  ul#summaryList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  ul#summaryList li { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; }
+  ul#summaryList input[type="checkbox"] { margin-top: 3px; accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; }
+  ul#summaryList label { flex: 1; }
+  ul#summaryList input:checked + label { color: var(--text-muted); text-decoration: line-through; }
+
+  .gallery-card { border-top: 3px solid var(--surface-3); }
+  .gallery-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .gallery-head h2 { margin: 0; font-size: 14.5px; }
+  .gallery-scroll {
+    display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+  .meme-card {
+    scroll-snap-align: start;
+    flex: 0 0 200px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .meme-emoji { font-size: 24px; }
+  .meme-card p { margin: 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+
+  .footnote {
+    color: var(--text-muted); font-size: 12.5px; text-align: center;
+    border-top: 1px solid var(--border); padding-top: 16px;
+  }
+  .footer-links { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 10px; font-size: 12.5px; }
+  .footer-links a, .footer-links button {
+    color: var(--text-muted); text-decoration: underline; background: none; padding: 0; font: inherit;
+  }
+  .footer-links a:hover, .footer-links button:hover { color: var(--accent); }
+
+  .section-lead { margin: 0; color: var(--text-muted); font-size: 13.5px; }
+
+  .faq-list { display: flex; flex-direction: column; gap: 8px; }
+  .faq-item { border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); overflow: hidden; }
+  .faq-item summary {
+    cursor: pointer; padding: 12px 14px; font-weight: 600; font-size: 14px;
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: "+"; color: var(--text-muted); font-weight: 400; flex-shrink: 0; transition: transform 0.15s; }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item p { margin: 0; padding: 0 14px 14px; color: var(--text-muted); font-size: 13.5px; line-height: 1.6; }
+
+  .quiz-list { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); font-size: 14px; cursor: pointer;
+  }
+  .quiz-option input { accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; }
+  .quiz-result { display: none; padding: 14px; border-radius: 10px; background: var(--accent-soft); border: 1px solid var(--accent); }
+  .quiz-result.show { display: block; }
+  .quiz-result strong { font-size: 16px; }
+  .quiz-result span { display: block; margin-top: 6px; color: var(--text-muted); font-size: 13.5px; }
+
+  dialog#privacyDialog {
+    border: none; border-radius: 16px; padding: 0; max-width: 520px; width: 90%;
+    background: var(--surface); color: var(--text); box-shadow: var(--shadow);
+  }
+  dialog#privacyDialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+  .dialog-inner { padding: 22px; display: flex; flex-direction: column; gap: 10px; max-height: 70vh; overflow-y: auto; }
+  .dialog-inner h2 { margin: 0 0 4px; font-size: 17px; }
+  .dialog-inner h3 { margin: 10px 0 0; font-size: 13px; color: var(--accent); }
+  .dialog-inner p { margin: 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.65; }
+  .dialog-inner a { color: var(--accent); }
+  .dialog-close { align-self: flex-end; margin-top: 4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div class="pill-row">
+      <span class="pill">NO LOGIN</span>
+      <span class="pill">브라우저에서만 처리</span>
+      <span class="pill">저장 안 함</span>
+    </div>
+    <h1>잔소리 필터기</h1>
+    <p class="tagline">상사님 메시지를 붙여넣으면 잔소리 지수 진단, 순화된 표현, 할 일 요약을 한번에 뽑아드려요.</p>
+    <div class="filter-bar" aria-hidden="true"></div>
+  </header>
+
+  <section class="card">
+    <div class="input-head">
+      <label for="rawInput">원본 텍스트 <span class="tag-raw">여과 전</span></label>
+      <div class="examples">
+        <button type="button" class="chip" data-example="0">예시: 마감 재촉</button>
+        <button type="button" class="chip" data-example="1">예시: 보고서 오타</button>
+        <button type="button" class="chip" data-example="2">예시: 미팅 준비</button>
+      </div>
+    </div>
+    <textarea id="rawInput" placeholder="여기에 상사님 메시지를 그대로 붙여넣어 보세요..."></textarea>
+    <div class="input-actions">
+      <button type="button" id="filterBtn" class="btn-primary">순화하기 →</button>
+      <button type="button" id="randomBtn" class="btn-ghost">🎲 랜덤 잔소리 뽑기</button>
+      <button type="button" id="clearBtn" class="btn-ghost">지우기</button>
+    </div>
+  </section>
+
+  <p class="empty-state" id="emptyState">아직 결과가 없어요. 텍스트를 붙여넣고 순화하기를 눌러보세요.</p>
+
+  <section class="results" id="results" hidden>
+    <div class="card diag-card">
+      <div class="diag-grid">
+        <div class="score-block">
+          <div class="score-row">
+            <span class="score-label">오늘의 잔소리 지수</span>
+            <span class="score-number" id="scoreNumber">0</span>
+          </div>
+          <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+          <div class="score-scale"><span>차분함</span><span>강한 잔소리</span></div>
+        </div>
+        <div class="type-block">
+          <span class="type-badge" id="typeBadge">🙂 일반형</span>
+          <p class="type-tip" id="typeTip"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card result-card">
+      <div class="result-head">
+        <h2>순화된 표현 <span class="tag-raw" style="background:var(--accent-soft);color:var(--accent);">여과 완료</span></h2>
+        <div class="result-actions">
+          <button type="button" class="btn-soft" id="copySoften">복사</button>
+          <button type="button" class="btn-soft" id="downloadCard">이미지 저장</button>
+        </div>
+      </div>
+      <div class="intensity-row">
+        <button type="button" class="intensity-btn" data-level="soft">순함</button>
+        <button type="button" class="intensity-btn active" data-level="normal">보통</button>
+        <button type="button" class="intensity-btn" data-level="strong">강함</button>
+      </div>
+      <p id="softenOutput"></p>
+    </div>
+
+    <div class="card compare-card">
+      <div class="result-head"><h2>Before / After 비교</h2></div>
+      <div class="compare-stage" id="compareStage">
+        <div class="compare-pane pane-raw">
+          <span class="compare-label">여과 전</span><span id="compareRawText"></span>
+        </div>
+        <div class="compare-pane pane-soft">
+          <span class="compare-label">여과 후</span><span id="compareSoftText"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card result-card" style="border-top-color: var(--text-muted);">
+      <div class="result-head"><h2>오늘의 요약</h2></div>
+      <div class="chips" id="metaChips"></div>
+      <ul id="summaryList"></ul>
+    </div>
+  </section>
+
+  <section class="card gallery-card">
+    <div class="gallery-head"><h2>직장인 공감 카드</h2></div>
+    <div class="gallery-scroll">
+      <div class="meme-card"><span class="meme-emoji">😮‍💨</span><p>야근은 계획, 잔소리는 기본 옵션.</p></div>
+      <div class="meme-card"><span class="meme-emoji">🫠</span><p>완벽한 보고서보다 완벽한 침묵이 나을 때가 있다.</p></div>
+      <div class="meme-card"><span class="meme-emoji">🕰️</span><p>상사의 '빨리'는 번역하면 대략 3일이다.</p></div>
+      <div class="meme-card"><span class="meme-emoji">📋</span><p>체크리스트가 늘어날수록 퇴근 시간은 줄어든다.</p></div>
+      <div class="meme-card"><span class="meme-emoji">☕</span><p>커피 한 잔의 평화, 그리고 곧이어 오는 메신저 알림.</p></div>
+      <div class="meme-card"><span class="meme-emoji">🧘</span><p>잔소리는 흘려듣고, 할 일만 건져내자.</p></div>
+      <div class="meme-card"><span class="meme-emoji">📅</span><p>월요일은 인류가 발명한 것 중 가장 잔인한 시간 단위.</p></div>
+      <div class="meme-card"><span class="meme-emoji">🎯</span><p>숨은 할 일 찾기: 오늘도 클리어.</p></div>
+    </div>
+  </section>
+
+  <section class="card" id="faq">
+    <div class="gallery-head"><h2>이용 안내 &amp; FAQ</h2></div>
+    <p class="section-lead">회원가입 없이 무료로 사용할 수 있는 도구입니다. 자주 묻는 질문을 확인해보세요.</p>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>정말 회원가입 없이 바로 쓸 수 있나요?</summary>
+        <p>네. 로그인이나 가입 절차 없이 텍스트를 붙여넣고 버튼만 누르면 바로 결과를 확인할 수 있습니다.</p>
+      </details>
+      <details class="faq-item">
+        <summary>입력한 텍스트는 어딘가에 저장되나요?</summary>
+        <p>아니요. 모든 처리는 사용자의 브라우저 안에서만 이루어지며, 서버로 전송하거나 저장하지 않습니다.</p>
+      </details>
+      <details class="faq-item">
+        <summary>순화 결과가 항상 완벽한가요?</summary>
+        <p>자주 나오는 잔소리 패턴을 기준으로 한 규칙 기반 프로토타입이라, 문장에 따라 결과가 다소 부자연스러울 수 있습니다. 참고용으로 활용해 주세요.</p>
+      </details>
+      <details class="faq-item">
+        <summary>이미지로 저장한 카드는 어디에 쓸 수 있나요?</summary>
+        <p>순화된 문장을 카드 이미지로 내려받아 메신저나 SNS에 공유할 때 활용하실 수 있습니다.</p>
+      </details>
+      <details class="faq-item">
+        <summary>모바일에서도 사용할 수 있나요?</summary>
+        <p>네, 별도 앱 설치 없이 모바일 브라우저에서도 동일하게 사용할 수 있습니다.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="quiz">
+    <div class="gallery-head"><h2>오늘의 직장인 생존 지수 테스트</h2></div>
+    <p class="section-lead">오늘 해당하는 항목을 체크하고 결과를 확인해보세요.</p>
+    <div class="quiz-list">
+      <label class="quiz-option"><input type="checkbox" class="quiz-check"> 오늘 커피를 3잔 이상 마셨다</label>
+      <label class="quiz-option"><input type="checkbox" class="quiz-check"> 퇴근 30분 전에 새 업무 지시를 받았다</label>
+      <label class="quiz-option"><input type="checkbox" class="quiz-check"> 메신저 알림음에 심장이 철렁한 적이 있다</label>
+      <label class="quiz-option"><input type="checkbox" class="quiz-check"> 점심시간에도 업무 생각을 했다</label>
+      <label class="quiz-option"><input type="checkbox" class="quiz-check"> "내일 다시 얘기하자"는 말에 불안했다</label>
+    </div>
+    <button type="button" class="btn-primary" id="quizBtn" style="align-self:flex-start;">결과 보기</button>
+    <div class="quiz-result" id="quizResult"></div>
+  </section>
+
+  <footer class="footnote">
+    <p style="margin:0;">이 페이지는 규칙 기반으로 동작하는 프로토타입입니다. 입력한 텍스트는 서버로 전송되지 않고 브라우저 안에서만 처리돼요.</p>
+    <div class="footer-links">
+      <a href="#faq">이용안내</a>
+      <button type="button" id="openPrivacy">개인정보 처리방침</button>
+      <span>© 2026 잔소리 필터기</span>
+    </div>
+  </footer>
+</div>
+
+<dialog id="privacyDialog">
+  <div class="dialog-inner">
+    <h2>개인정보 처리방침</h2>
+    <h3>수집하는 개인정보</h3>
+    <p>이 사이트는 회원가입 및 로그인 기능이 없으며, 입력하신 텍스트를 포함한 어떠한 개인정보도 서버로 전송하거나 저장하지 않습니다. 모든 텍스트 처리는 사용자의 브라우저 내에서만 이루어집니다.</p>
+    <h3>광고 및 쿠키</h3>
+    <p>이 사이트는 Google AdSense를 통해 광고를 게재할 수 있습니다. Google 및 광고 파트너는 맞춤형 광고를 제공하기 위해 쿠키를 사용할 수 있으며, 이용자는 <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google 광고 설정</a>에서 맞춤 광고를 언제든지 해제할 수 있습니다.</p>
+    <h3>문의</h3>
+    <p>개인정보 처리방침에 대해 문의사항이 있으시면 [운영자 이메일 주소를 입력하세요]로 연락해 주세요.</p>
+    <p style="font-size:12px;">최종 수정일: 2026-07-18</p>
+    <button type="button" class="btn-soft dialog-close" id="closePrivacy">닫기</button>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  var EXAMPLES = [
+    "야 너 이거 왜 아직도 안 끝났어? 몇 번을 말해야 알아들어? 오늘까지 무조건 끝내. 다른 사람들은 다 하는데 너만 왜 이렇게 느려. 빨리 좀 해!!",
+    "보고서 오타 투성이던데 제대로 좀 확인하고 보내라고 했잖아. 내일 아침 9시까지 수정해서 다시 보고해. 이런 식으로 하면 곤란해.",
+    "김대리, 클라이언트 미팅 자료 아직도 안 만들었어요? 정신 좀 차리세요. 이번주 금요일까지 초안 공유하고, 팀장님한테도 카톡으로 미리 보고하세요."
+  ];
+  var lastExampleIndex = -1;
+
+  var CANNED_RULES = [
+    [/야\s*너\s*이거\s*왜\s*아직도\s*안\s*끝났어\??/g, "이거 진행 상황이 어떻게 되는지 여쭤봐도 될까요?"],
+    [/몇\s*번을?\s*말해야\s*알아[듣들]어\??/g, "다시 한번 안내드리면,"],
+    [/오늘까지\s*무조건\s*끝내\.?/g, "가능하시다면 오늘까지 마무리해 주시면 감사하겠습니다."],
+    [/다른\s*사람들?은?\s*다\s*하는데\s*너만\s*왜\s*이렇게\s*느려\.?/g, "조금 더 속도를 내주시면 좋을 것 같아요."],
+    [/빨리\s*좀\s*해\.?/g, "가능한 빠르게 진행해 주시면 감사하겠습니다."],
+    [/보고서\s*오타\s*투성이던데\s*제대로\s*좀\s*확인하고\s*보내라고\s*했잖아\.?/g, "보고서에 오타가 몇 군데 보이는데, 조금 더 꼼꼼히 확인 후 보내주시면 좋을 것 같아요."],
+    [/내일\s*아침\s*9시까지\s*수정해서\s*다시\s*보고해\.?/g, "내일 아침 9시까지 수정해서 다시 공유해 주시면 감사하겠습니다."],
+    [/이런\s*식으로\s*하면\s*곤란해\.?/g, "다음에는 조금 더 신경 써주시면 좋을 것 같아요."],
+    [/클라이언트\s*미팅\s*자료\s*아직도\s*안\s*만들었어요\??/g, "클라이언트 미팅 자료는 어떻게 진행되고 있는지 여쭤봐도 될까요?"],
+    [/정신\s*좀\s*차리세요\.?/g, "조금 더 집중해 주시면 감사하겠습니다."],
+    [/이번주\s*금요일까지\s*초안\s*공유하고,?\s*팀장님한테도\s*카톡으로\s*미리\s*보고하세요\.?/g, "이번 주 금요일까지 초안을 공유해 주시고, 팀장님께도 미리 메시지로 보고해 주시면 좋을 것 같아요."]
+  ];
+
+  function softenGeneric(text) {
+    text = text.replace(/[!?]{2,}/g, ".");
+    text = text.replace(/[ㅋㅎㅠㅜㅡ]{3,}/g, "");
+    text = text.replace(/(짜증\S*|한심\S*|미치겠\S*|답답해\S*)/g, "아쉬운 부분이 있어요");
+    text = text.replace(/^야[,\s]+/g, "");
+    text = text.replace(/\s너\s/g, " ");
+    text = text.replace(/(\S{1,4}(?:대리|과장|팀장|주임|사원|부장|차장|매니저))(,)/g, "$1님$2");
+    text = text.replace(/([가-힣]+)해라([.!?]?)/g, "$1해 주세요$2");
+    text = text.replace(/([가-힣]+)하지\s*마(세요)?([.!?]?)/g, "$1는 지양해 주시면 좋겠습니다$3");
+    text = text.replace(/([가-힣]+)해([.!?])(?!\s*주)/g, "$1해 주세요$2");
+    text = text.replace(/([가-힣]+)했어\?/g, "$1했나요?");
+    text = text.replace(/\s{2,}/g, " ");
+    text = text.replace(/([.!?])\1+/g, "$1");
+    return text.trim();
+  }
+
+  function softenText(raw) {
+    var text = raw;
+    CANNED_RULES.forEach(function (rule) { text = text.replace(rule[0], rule[1]); });
+    text = softenGeneric(text);
+    return text;
+  }
+
+  function applyIntensity(text, level) {
+    if (level === "soft") {
+      text = text.replace(/감사하겠습니다/g, "정말 감사드리겠습니다");
+      text = text.replace(/좋을 것 같아요/g, "괜찮으시면 편하게 확인해 주시면 좋겠어요");
+      text = text.replace(/여쭤봐도 될까요\?/g, "여쭤봐도 괜찮을까요? 바쁘시면 편하실 때 알려주세요.");
+      return text.trim();
+    }
+    if (level === "strong") {
+      text = text.replace(/가능하시다면\s*/g, "");
+      text = text.replace(/가능한\s*빠르게\s*/g, "빠르게 ");
+      text = text.replace(/좋을 것 같아요/g, "부탁드립니다");
+      text = text.replace(/여쭤봐도 될까요\?/g, "확인 후 회신 부탁드립니다.");
+      text = text.replace(/조금\s*더\s*/g, "");
+      text = text.replace(/\s{2,}/g, " ").trim();
+      return text;
+    }
+    return text;
+  }
+
+  var DEADLINE_RE = /(오늘|내일|모레|이번\s?주\s?[월화수목금토일]?요?일?|다음\s?주\s?[월화수목금토일]?요?일?|[월화수목금토일]요일)[^,.!?\n]{0,15}까지/g;
+  var ACTION_RE = /(확인|수정|보고|공유|제출|정리|전달|준비|회신|작성|발송|마무리|끝내|만들)/;
+  var NAME_RE = /(\S{1,4}(?:대리|과장|팀장|주임|사원|부장|차장|매니저))/;
+
+  function buildSummary(raw) {
+    var sentences = raw.split(/(?<=[.?!])\s+|\n+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    var deadlines = [];
+    var seen = {};
+    var m;
+    DEADLINE_RE.lastIndex = 0;
+    while ((m = DEADLINE_RE.exec(raw)) !== null) {
+      var d = m[0].trim();
+      if (!seen[d]) { seen[d] = true; deadlines.push(d); }
+    }
+    var nameMatch = raw.match(NAME_RE);
+    var items = sentences.filter(function (s) { return ACTION_RE.test(s); });
+    if (items.length === 0) items = sentences.slice(0, 2);
+    items = items.map(function (s) {
+      var t = s.replace(/(무조건|당장|도대체|대체)\s*/g, "");
+      t = t.replace(/\s너\s/g, " ").replace(/^야[,\s]+/g, "");
+      t = t.replace(/[.!?]+$/g, "");
+      return t.trim();
+    }).filter(Boolean);
+    return { deadlines: deadlines, name: nameMatch ? nameMatch[1] : null, items: items };
+  }
+
+  var HARSH_WORDS = ["당장", "무조건", "몇\\s*번", "왜\\s*이렇게", "왜\\s*아직", "제대로", "정신", "짜증", "한심", "곤란", "답답", "빨리", "너만", "안\\s*돼", "도대체", "대체", "비교"];
+
+  function scoreIntensity(raw) {
+    var score = 15;
+    var punchMarks = (raw.match(/[!?]{2,}/g) || []).length;
+    score += punchMarks * 12;
+    HARSH_WORDS.forEach(function (w) {
+      var matches = raw.match(new RegExp(w, "g"));
+      if (matches) score += matches.length * 9;
+    });
+    if (raw.replace(/\s/g, "").length < 30) score += 8;
+    return Math.max(4, Math.min(100, Math.round(score)));
+  }
+
+  var TYPE_DEFS = [
+    { type: "재촉형", emoji: "🏃", keywords: ["빨리", "당장", "까지", "무조건", "아직도"], tip: "마감이 명확한지 다시 확인하고, 우선순위를 조율해서 답장해보세요." },
+    { type: "지적형", emoji: "🔍", keywords: ["오타", "제대로", "확인", "틀렸", "다시"], tip: "구체적으로 어떤 부분을 수정해야 하는지 체크리스트로 정리해보세요." },
+    { type: "비교형", emoji: "⚖️", keywords: ["다른\\s*사람", "너만", "비교"], tip: "비교보다 본인의 진행 상황과 강점에 집중해서 답하는 게 도움이 돼요." },
+    { type: "감정폭발형", emoji: "💥", keywords: ["정신", "짜증", "한심", "곤란", "답답", "미치겠"], tip: "감정적인 표현은 흘려보내고, 핵심 요청사항만 캐치해서 대응하세요." }
+  ];
+
+  function classifyType(raw) {
+    var best = null;
+    var bestCount = 0;
+    TYPE_DEFS.forEach(function (def) {
+      var count = 0;
+      def.keywords.forEach(function (kw) {
+        var matches = raw.match(new RegExp(kw, "g"));
+        if (matches) count += matches.length;
+      });
+      if (count > bestCount) { bestCount = count; best = def; }
+    });
+    if (!best) return { type: "일반형", emoji: "🙂", tip: "차분하게 핵심만 정리해서 답장해보세요." };
+    return best;
+  }
+
+  function wrapCanvasText(ctx, text, maxWidth) {
+    var words = text.split(/\s+/);
+    var lines = [];
+    var current = "";
+    words.forEach(function (word) {
+      var test = current ? current + " " + word : word;
+      if (ctx.measureText(test).width > maxWidth && current) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = test;
+      }
+    });
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  function roundRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function downloadSoftenedCard(text) {
+    if (!text) return;
+    var scale = 2;
+    var width = 640;
+    var padding = 40;
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+    ctx.font = '500 20px -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    var lines = wrapCanvasText(ctx, text, width - padding * 2);
+    var lineHeight = 32;
+    var headerHeight = 66;
+    var footerHeight = 46;
+    var height = headerHeight + lines.length * lineHeight + footerHeight;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = "#121815";
+    roundRectPath(ctx, 0, 0, width, height, 20);
+    ctx.fill();
+
+    ctx.fillStyle = "#4FD8A8";
+    ctx.font = '700 12px ui-monospace, Menlo, Consolas, monospace';
+    ctx.fillText("여과 완료 · 잔소리 필터기", padding, 32);
+
+    ctx.strokeStyle = "#26302B";
+    ctx.beginPath();
+    ctx.moveTo(padding, 46);
+    ctx.lineTo(width - padding, 46);
+    ctx.stroke();
+
+    ctx.fillStyle = "#ECF2EF";
+    ctx.font = '500 20px -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    var y = headerHeight;
+    lines.forEach(function (line) { ctx.fillText(line, padding, y); y += lineHeight; });
+
+    ctx.fillStyle = "#8FA098";
+    ctx.font = '400 11px -apple-system, sans-serif';
+    ctx.fillText("no login · in-browser only", padding, height - 18);
+
+    var link = document.createElement("a");
+    link.download = "softened-message.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
+
+  var rawInput = document.getElementById("rawInput");
+  var filterBtn = document.getElementById("filterBtn");
+  var clearBtn = document.getElementById("clearBtn");
+  var randomBtn = document.getElementById("randomBtn");
+  var results = document.getElementById("results");
+  var emptyState = document.getElementById("emptyState");
+  var softenOutput = document.getElementById("softenOutput");
+  var metaChips = document.getElementById("metaChips");
+  var summaryList = document.getElementById("summaryList");
+  var copySoften = document.getElementById("copySoften");
+  var downloadCardBtn = document.getElementById("downloadCard");
+  var scoreNumber = document.getElementById("scoreNumber");
+  var scoreFill = document.getElementById("scoreFill");
+  var typeBadge = document.getElementById("typeBadge");
+  var typeTip = document.getElementById("typeTip");
+  var compareRawText = document.getElementById("compareRawText");
+  var compareSoftText = document.getElementById("compareSoftText");
+  var intensityBtns = document.querySelectorAll(".intensity-btn");
+
+  var lastRaw = "";
+  var currentLevel = "normal";
+
+  function renderSoftened() {
+    var base = softenText(lastRaw);
+    var final = applyIntensity(base, currentLevel);
+    softenOutput.textContent = final;
+    compareSoftText.textContent = final;
+    return final;
+  }
+
+  document.querySelectorAll(".chip[data-example]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      rawInput.value = EXAMPLES[+btn.dataset.example];
+      rawInput.focus();
+    });
+  });
+
+  randomBtn.addEventListener("click", function () {
+    var idx;
+    do { idx = Math.floor(Math.random() * EXAMPLES.length); } while (idx === lastExampleIndex && EXAMPLES.length > 1);
+    lastExampleIndex = idx;
+    rawInput.value = EXAMPLES[idx];
+    render();
+  });
+
+  function render() {
+    var raw = rawInput.value.trim();
+    if (!raw) { rawInput.focus(); return; }
+    lastRaw = raw;
+
+    renderSoftened();
+
+    var score = scoreIntensity(raw);
+    scoreNumber.textContent = score;
+    requestAnimationFrame(function () { scoreFill.style.width = score + "%"; });
+
+    var cls = classifyType(raw);
+    typeBadge.textContent = cls.emoji + " " + cls.type;
+    typeTip.textContent = cls.tip;
+
+    var summary = buildSummary(raw);
+    metaChips.innerHTML = "";
+    summary.deadlines.forEach(function (d) {
+      var span = document.createElement("span");
+      span.className = "meta-chip";
+      span.textContent = "⏰ " + d;
+      metaChips.appendChild(span);
+    });
+    if (summary.name) {
+      var span2 = document.createElement("span");
+      span2.className = "meta-chip";
+      span2.textContent = "👤 " + summary.name + (summary.name.charAt(summary.name.length - 1) === "님" ? "" : "님");
+      metaChips.appendChild(span2);
+    }
+
+    summaryList.innerHTML = "";
+    summary.items.forEach(function (item, i) {
+      var li = document.createElement("li");
+      var id = "todo-" + i + "-" + Date.now();
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.id = id;
+      var label = document.createElement("label");
+      label.htmlFor = id;
+      label.textContent = item;
+      li.appendChild(cb);
+      li.appendChild(label);
+      summaryList.appendChild(li);
+    });
+
+    compareRawText.textContent = raw;
+
+    results.hidden = false;
+    emptyState.hidden = true;
+  }
+
+  filterBtn.addEventListener("click", render);
+  rawInput.addEventListener("keydown", function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") render();
+  });
+
+  clearBtn.addEventListener("click", function () {
+    rawInput.value = "";
+    results.hidden = true;
+    emptyState.hidden = false;
+    rawInput.focus();
+  });
+
+  intensityBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      intensityBtns.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      currentLevel = btn.dataset.level;
+      if (lastRaw) renderSoftened();
+    });
+  });
+
+  copySoften.addEventListener("click", function () {
+    var text = softenOutput.textContent;
+    if (!text) return;
+    var done = function () {
+      copySoften.textContent = "복사됨!";
+      copySoften.classList.add("copied");
+      setTimeout(function () { copySoften.textContent = "복사"; copySoften.classList.remove("copied"); }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(done);
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      done();
+    }
+  });
+
+  downloadCardBtn.addEventListener("click", function () {
+    downloadSoftenedCard(softenOutput.textContent);
+  });
+
+  var QUIZ_TIERS = [
+    { max: 1, title: "😌 여유형", desc: "오늘은 비교적 평화로운 하루를 보내고 계시네요." },
+    { max: 3, title: "💪 생존형", desc: "무난하게 하루를 버텨내고 계십니다. 커피 한 잔 어떠세요." },
+    { max: 5, title: "🔥 베테랑형", desc: "오늘 정말 고생 많으셨습니다. 잠깐이라도 쉬어가세요." }
+  ];
+  var quizBtn = document.getElementById("quizBtn");
+  var quizResult = document.getElementById("quizResult");
+  quizBtn.addEventListener("click", function () {
+    var n = document.querySelectorAll(".quiz-check:checked").length;
+    var tier = QUIZ_TIERS[0];
+    for (var i = 0; i < QUIZ_TIERS.length; i++) {
+      if (n <= QUIZ_TIERS[i].max) { tier = QUIZ_TIERS[i]; break; }
+    }
+    quizResult.innerHTML = "<strong>" + n + "/5 · " + tier.title + "</strong><span>" + tier.desc + "</span>";
+    quizResult.classList.add("show");
+  });
+
+  var privacyDialog = document.getElementById("privacyDialog");
+  document.getElementById("openPrivacy").addEventListener("click", function () { privacyDialog.showModal(); });
+  document.getElementById("closePrivacy").addEventListener("click", function () { privacyDialog.close(); });
+})();
+</script>
+</body>
+</html>
