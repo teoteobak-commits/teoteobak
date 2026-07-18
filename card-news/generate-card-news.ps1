@@ -142,6 +142,7 @@ $pageHtml = @"
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>오늘의 카드뉴스 · 잔소리 필터기</title>
 <style>
   body { margin:0; background:#0B0F0E; color:#ECF2EF; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; padding:20px; }
