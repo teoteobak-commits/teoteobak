@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오늘의 카드뉴스 · 잔소리 필터기</title>
+<style>
+  body { margin:0; background:#0B0F0E; color:#ECF2EF; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; padding:20px; }
+  .wrap { max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+  h1 { font-size:18px; margin:8px 0 0; }
+  .date { color:#8FA098; font-size:13px; }
+  img { width:100%; border-radius:16px; border:1px solid #26302B; display:block; }
+  .caption-box { background:#1B231F; border:1px solid #26302B; border-radius:12px; padding:16px; font-size:14px; line-height:1.6; white-space:pre-wrap; }
+  button { width:100%; padding:14px; border:none; border-radius:10px; background:#4FD8A8; color:#06120D; font-weight:700; font-size:15px; cursor:pointer; }
+  button.copied { background:#2FB98C; }
+  a.back { color:#8FA098; font-size:13px; text-align:center; text-decoration:none; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <h1>오늘의 카드뉴스</h1>
+      <div class="date">2026-07-18 생성 · 매일 아침 자동 갱신</div>
+    </div>
+    <img src="latest.png?v=20260718_182341" alt="오늘의 카드뉴스 이미지">
+    <div class="caption-box" id="caption">상사가 "야 너 이거 왜 아직도 안 끝났어?"라고 하면... 저는 이렇게 답장해요:<br>"진행 상황이 어떻게 되는지 여쭤봐도 될까요?"<br><br>잔소리 순화기, 무료로 써보세요.<br>링크는 프로필에 👆<br><br>#직장인공감 #직장인밈 #오피스라이프 #퇴사각 #월급루팡 #상사잔소리</div>
+    <button id="copyBtn" type="button">캡션 복사하기</button>
+    <a class="back" href="/">← 잔소리 필터기로 가기</a>
+  </div>
+<script>
+document.getElementById('copyBtn').addEventListener('click', function () {
+  var text = document.getElementById('caption').innerText;
+  var btn = this;
+  function done() {
+    btn.textContent = '복사됨!';
+    btn.classList.add('copied');
+    setTimeout(function () { btn.textContent = '캡션 복사하기'; btn.classList.remove('copied'); }, 1400);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(done);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    done();
+  }
+});
+</script>
+</body>
+</html>

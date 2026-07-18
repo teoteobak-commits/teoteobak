@@ -124,6 +124,78 @@ $bmp.Dispose()
 $captionPath = Join-Path $PSScriptRoot "카드뉴스_$timestamp.txt"
 Set-Content -Path $captionPath -Value $caption -Encoding UTF8
 
+$latestImagePath = Join-Path $PSScriptRoot "latest.png"
+Copy-Item -Path $outPath -Destination $latestImagePath -Force
+
+function HtmlEscape($s) {
+  $s = $s -replace '&', '&amp;'
+  $s = $s -replace '<', '&lt;'
+  $s = $s -replace '>', '&gt;'
+  return $s
+}
+$today = Get-Date -Format "yyyy-MM-dd"
+$captionHtml = (HtmlEscape $caption) -replace "`n", "<br>"
+
+$pageHtml = @"
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오늘의 카드뉴스 · 잔소리 필터기</title>
+<style>
+  body { margin:0; background:#0B0F0E; color:#ECF2EF; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; padding:20px; }
+  .wrap { max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+  h1 { font-size:18px; margin:8px 0 0; }
+  .date { color:#8FA098; font-size:13px; }
+  img { width:100%; border-radius:16px; border:1px solid #26302B; display:block; }
+  .caption-box { background:#1B231F; border:1px solid #26302B; border-radius:12px; padding:16px; font-size:14px; line-height:1.6; white-space:pre-wrap; }
+  button { width:100%; padding:14px; border:none; border-radius:10px; background:#4FD8A8; color:#06120D; font-weight:700; font-size:15px; cursor:pointer; }
+  button.copied { background:#2FB98C; }
+  a.back { color:#8FA098; font-size:13px; text-align:center; text-decoration:none; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <h1>오늘의 카드뉴스</h1>
+      <div class="date">$today 생성 · 매일 아침 자동 갱신</div>
+    </div>
+    <img src="latest.png?v=$timestamp" alt="오늘의 카드뉴스 이미지">
+    <div class="caption-box" id="caption">$captionHtml</div>
+    <button id="copyBtn" type="button">캡션 복사하기</button>
+    <a class="back" href="/">← 잔소리 필터기로 가기</a>
+  </div>
+<script>
+document.getElementById('copyBtn').addEventListener('click', function () {
+  var text = document.getElementById('caption').innerText;
+  var btn = this;
+  function done() {
+    btn.textContent = '복사됨!';
+    btn.classList.add('copied');
+    setTimeout(function () { btn.textContent = '캡션 복사하기'; btn.classList.remove('copied'); }, 1400);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(done);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    done();
+  }
+});
+</script>
+</body>
+</html>
+"@
+
+$indexPath = Join-Path $PSScriptRoot "index.html"
+Set-Content -Path $indexPath -Value $pageHtml -Encoding UTF8
+
 Write-Output "IMAGE: $outPath"
 Write-Output "CAPTION: $captionPath"
+Write-Output "PAGE: $indexPath (+ latest.png)"
 
