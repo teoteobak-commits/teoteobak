@@ -516,14 +516,24 @@
   function softenGeneric(text) {
     text = text.replace(/[!?]{2,}/g, ".");
     text = text.replace(/[ㅋㅎㅠㅜㅡ]{3,}/g, "");
-    text = text.replace(/(짜증\S*|한심\S*|미치겠\S*|답답해\S*)/g, "아쉬운 부분이 있어요");
+    // 욕설은 문장에 못 녹이니 그냥 들어낸다
+    text = text.replace(/(씨\s*[발밣]+|개\s*새\s*끼|병\s*신|미친\s*[놈년]?|또라이|지\s*랄)/g, "");
+    // 비하성 형용사는 완곡한 문구로 치환
+    text = text.replace(/(짜증\S*|한심\S*|미치겠\S*|답답해?\S*|무능\S*|멍청\S*)/g, "아쉬운 부분이 있어요");
+    text = text.replace(/(^|\s)너\s/g, "$1");
     text = text.replace(/^야[,\s]+/g, "");
-    text = text.replace(/\s너\s/g, " ");
-    text = text.replace(/(\S{1,4}(?:대리|과장|팀장|주임|사원|부장|차장|매니저))(,)/g, "$1님$2");
+    text = text.replace(/(\S{1,4}(?:대리|과장|팀장|주임|사원|부장|차장|매니저))([,\s])/g, "$1님$2");
     text = text.replace(/([가-힣]+)해라([.!?]?)/g, "$1해 주세요$2");
-    text = text.replace(/([가-힣]+)하지\s*마(세요)?([.!?]?)/g, "$1는 지양해 주시면 좋겠습니다$3");
+    // "~하지마(세요)" — "확인하지마"처럼 붙은 경우와 "그냥 하지마"처럼 떨어진 경우 둘 다 처리
+    text = text.replace(/(\S*)하지\s*마(세요)?([.!?]?)/g, function (m, prefix, _seyo, punct) {
+      return (prefix ? prefix + "는 " : "") + "지양해 주시면 좋겠습니다" + punct;
+    });
     text = text.replace(/([가-힣]+)해([.!?])(?!\s*주)/g, "$1해 주세요$2");
     text = text.replace(/([가-힣]+)했어\?/g, "$1했나요?");
+    // "~냐" 의문형 반말 어미는 활용형과 무관하게 전부 "~나요?"로 (걸렸냐/왔냐/하냐 등)
+    text = text.replace(/([가-힣]+)냐(\??)/g, function (m, stem, q) { return stem + "나요" + (q || "?"); });
+    text = text.replace(/([가-힣]+)이야\?/g, "$1인가요?");
+    text = text.replace(/(진짜|정말|완전)(\s+|$)/g, "");
     text = text.replace(/\s{2,}/g, " ");
     text = text.replace(/([.!?])\1+/g, "$1");
     return text.trim();
