@@ -1,4 +1,5 @@
 .claude/settings.local.json
 card-news/*.png
 card-news/*.txt
+card-news/.state.json
 !card-news/latest.png
