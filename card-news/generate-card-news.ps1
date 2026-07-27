@@ -32,7 +32,7 @@ $EXAMPLES = @(
   @{ before = "제대로 좀 확인하고 보내라고 했잖아."; after = "조금 더 꼼꼼히 확인 후 보내주시면 좋을 것 같아요." },
   @{ before = "정신 좀 차리세요."; after = "조금 더 집중해 주시면 감사하겠습니다." },
   @{ before = "이걸 지금 보고라고 가져온 거야?"; after = "보고서 방향을 조금만 더 다듬어주시면 좋겠어요." },
-  @{ before = "몇 번을 말해야 알아들어?"; after = "제가 다시 한번 명확하게 설명드릴게요." },
+  @{ before = "몇 번을 말해야 알아들어?"; after = "제가 다시 한 번 명확하게 설명드릴게요." },
   @{ before = "그거 하나 제대로 못 해?"; after = "이 부분은 조금 더 신경 써주시면 좋겠습니다." },
   @{ before = "일을 왜 이렇게 느리게 해?"; after = "일정 관리를 조금 더 타이트하게 해주시면 좋겠어요." },
   @{ before = "센스 좀 있게 행동해라."; after = "상황에 맞게 조금 더 유연하게 대응해주시면 좋겠어요." },
@@ -124,7 +124,7 @@ if ($mode -eq 0) {
   $picked = Get-BagIndex $EXAMPLES.Count $exampleBag
   $exampleBag = $picked.bag
   $ex = $EXAMPLES[$picked.index]
-  $caption = "상사가 `"$($ex.before)`"라고 하면... 저는 이렇게 답장해요:`n`"$($ex.after)`"`n`n꼰대어 번역기, 무료로 써보세요.`n링크는 프로필에 👆`n`n$HASHTAGS"
+  $caption = "상사가 `"$($ex.before)`"라고 하면... 저는 이렇게 답장해요:`n`"$($ex.after)`"`n`n잔소리 순화기, 무료로 써보세요.`n링크는 프로필에 👆`n`n$HASHTAGS"
   $badgeFont = New-Object System.Drawing.Font("Consolas", 20, [System.Drawing.FontStyle]::Bold)
   $g.DrawString("BEFORE -> AFTER", $badgeFont, (New-Object System.Drawing.SolidBrush($accent)), 70, 80)
 
@@ -160,7 +160,7 @@ if ($mode -eq 0) {
 $footerY = $size - 120
 $g.FillRectangle((New-Object System.Drawing.SolidBrush($surface2)), 70, $footerY, ($size - 140), 70)
 $footerFont = New-Object System.Drawing.Font("Malgun Gothic", 26, [System.Drawing.FontStyle]::Bold)
-$g.DrawString("꼰대어 번역기 · 무료 · 회원가입 없음", $footerFont, (New-Object System.Drawing.SolidBrush($accent)), 100, ($footerY + 18))
+$g.DrawString("잔소리 순화기 · 무료 · 회원가입 없음", $footerFont, (New-Object System.Drawing.SolidBrush($accent)), 100, ($footerY + 18))
 
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $outPath = Join-Path $PSScriptRoot "카드뉴스_$timestamp.png"
@@ -190,7 +190,7 @@ $pageHtml = @"
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>오늘의 카드뉴스 · 꼰대어 번역기</title>
+<title>오늘의 카드뉴스 · 잔소리 순화기</title>
 <style>
   body { margin:0; background:#0B0F0E; color:#ECF2EF; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; padding:20px; }
   .wrap { max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
@@ -212,7 +212,7 @@ $pageHtml = @"
     <img src="latest.png?v=$timestamp" alt="오늘의 카드뉴스 이미지">
     <div class="caption-box" id="caption">$captionHtml</div>
     <button id="copyBtn" type="button">캡션 복사하기</button>
-    <a class="back" href="/">← 꼰대어 번역기로 가기</a>
+    <a class="back" href="/">← 잔소리 순화기로 가기</a>
   </div>
 <script>
 document.getElementById('copyBtn').addEventListener('click', function () {
