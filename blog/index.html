@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>칼럼 · 잔소리 순화기</title>
+<meta name="description" content="직장 내 소통, 잔소리 대처법, 세대차이 극복법을 다루는 잔소리 순화기의 칼럼 모음.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:url" content="https://teo1-chi.vercel.app/blog/">
+<meta property="og:title" content="칼럼 · 잔소리 순화기">
+<meta property="og:description" content="직장 내 소통, 잔소리 대처법, 세대차이 극복법을 다루는 칼럼 모음.">
+<style>
+  :root {
+    --bg: #0B0F0E;
+    --surface: #121815;
+    --surface-2: #1B231F;
+    --text: #ECF2EF;
+    --text-muted: #8FA098;
+    --accent: #4FD8A8;
+    --accent-strong: #2FB98C;
+    --accent-soft: rgba(79, 216, 168, 0.14);
+    --raw: #FF8A5C;
+    --border: #26302B;
+    --shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", "Segoe UI", sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 720px; margin: 0 auto; padding: 48px 20px 64px; display: flex; flex-direction: column; gap: 28px; }
+  a.back { color: var(--text-muted); font-size: 13.5px; text-decoration: none; }
+  a.back:hover { color: var(--accent); }
+  header.hero { display: flex; flex-direction: column; gap: 10px; }
+  .filter-bar { height: 5px; border-radius: 3px; background: linear-gradient(90deg, var(--raw) 0%, var(--surface-2) 48%, var(--accent) 100%); }
+  h1 { margin: 0; font-size: clamp(26px, 5vw, 34px); font-weight: 800; letter-spacing: -0.01em; }
+  .lead { margin: 0; color: var(--text-muted); font-size: 15px; max-width: 56ch; }
+
+  nav.toc {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  nav.toc h2 { margin: 0 0 10px; font-size: 13px; letter-spacing: 0.04em; color: var(--text-muted); text-transform: uppercase; }
+  nav.toc ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+  nav.toc a { color: var(--text); text-decoration: none; font-size: 14.5px; }
+  nav.toc a:hover { color: var(--accent); }
+
+  article {
+    background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent);
+    border-radius: 16px; padding: 26px 24px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 20px;
+  }
+  article h2 { margin: 0; font-size: 20px; font-weight: 800; text-wrap: balance; }
+  article h3 { margin: 14px 0 0; font-size: 15px; color: var(--accent); }
+  article p { margin: 0; font-size: 15px; color: var(--text-muted); }
+  article p strong { color: var(--text); }
+  article .cta { margin-top: 4px; font-size: 14px; }
+  article .cta a { color: var(--accent); }
+
+  footer.footnote { color: var(--text-muted); font-size: 12.5px; text-align: center; border-top: 1px solid var(--border); padding-top: 16px; }
+  footer.footnote a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="/">← 잔소리 순화기로 가기</a>
+
+  <header class="hero">
+    <h1>칼럼</h1>
+    <p class="lead">직장 내 소통, 잔소리 대처법, 세대차이를 줄이는 방법에 대한 짧은 글 모음입니다.</p>
+    <div class="filter-bar" aria-hidden="true"></div>
+  </header>
+
+  <nav class="toc" aria-label="목차">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#article-1">상사가 잔소리할 때, 감정적으로 반응하지 않는 3가지 방법</a></li>
+      <li><a href="#article-2">직장에서 싫은 소리 들었을 때 멘탈 관리하는 법</a></li>
+      <li><a href="#article-3">부하직원에게 싫은 소리 잘 하는 법 — 상사를 위한 커뮤니케이션 팁</a></li>
+      <li><a href="#article-4">직장 내 세대차이, 왜 '꼰대'라는 말이 나올까</a></li>
+      <li><a href="#article-5">메신저로 업무 지시받을 때 오해를 줄이는 방법</a></li>
+    </ol>
+  </nav>
+
+  <article id="article-1">
+    <h2>상사가 잔소리할 때, 감정적으로 반응하지 않는 3가지 방법</h2>
+    <p>상사의 메시지 한 줄에 하루 종일 기분이 상해본 적 있으신가요? 잔소리는 내용보다 말투가 먼저 와닿기 때문에, 정작 무엇을 해야 하는지보다 감정이 먼저 앞서는 경우가 많습니다. 감정적으로 휘둘리지 않고 업무에 집중하는 세 가지 방법을 정리했습니다.</p>
+    <h3>1. 읽자마자 답장하지 않기</h3>
+    <p>화가 난 상태에서 즉시 반응하면 감정이 그대로 텍스트에 묻어 나옵니다. 메시지를 확인했다면 최소 5~10분은 시간을 두고, 그 사이 커피 한 잔이나 짧은 산책으로 감정을 가라앉히세요. 급한 업무 지시라면 "확인했습니다, 검토 후 답변드리겠습니다" 정도로 짧게 수신 확인만 하고 넘어가는 것도 방법입니다.</p>
+    <h3>2. 내용과 말투를 분리해서 읽기</h3>
+    <p>"이걸 왜 아직도 안 끝냈어?"라는 메시지에서 화나는 건 말투지, 내용 자체는 대부분 "진행 상황 공유"라는 단순한 요청인 경우가 많습니다. 문장에서 감정적인 수식어를 걷어내고 <strong>무엇을 언제까지 해야 하는가</strong>만 남겨서 읽는 연습을 하면, 실제로 처리해야 할 업무가 훨씬 가볍게 느껴집니다.</p>
+    <h3>3. 기록으로 남기고 흘려보내기</h3>
+    <p>같은 잔소리가 반복된다면 감정적으로 쌓아두기보다 날짜와 내용을 짧게 메모해두세요. 나중에 패턴이 보이면 그 자체로 대응 전략을 세울 수 있는 정보가 됩니다. 반대로 한 번뿐인 감정적 발언이라면, 기록해두었다는 사실만으로도 마음에서 내려놓기가 한결 쉬워집니다.</p>
+    <p class="cta">잔소리를 순화해서 다시 읽어보는 것도 감정 소모를 줄이는 방법 중 하나입니다. <a href="/">상단의 도구</a>에 메시지를 붙여넣어 보세요.</p>
+  </article>
+
+  <article id="article-2">
+    <h2>직장에서 싫은 소리 들었을 때 멘탈 관리하는 법</h2>
+    <p>업무 피드백이 아니라 인신공격처럼 느껴지는 말을 들었을 때, 우리는 쉽게 "내가 무능한가"라는 생각에 빠집니다. 하지만 대부분의 직장 내 갈등은 개인의 능력 문제가 아니라 소통 방식의 문제인 경우가 많습니다.</p>
+    <h3>피드백과 비난을 구분하세요</h3>
+    <p>"이 부분을 이렇게 고쳐주세요"는 피드백이지만, "이것도 못 하냐"는 비난입니다. 메시지에서 실제로 바꿔야 할 행동이 무엇인지만 골라내고, 나머지 감정적 표현은 상대방의 그날 컨디션 문제로 넘기는 연습이 필요합니다.</p>
+    <h3>혼자 쌓아두지 마세요</h3>
+    <p>믿을 수 있는 동료나 친구에게 상황을 이야기하는 것만으로도 객관화가 됩니다. 나만 겪는 일이 아니라는 걸 확인하는 것도 도움이 되고, 제3자의 시선에서 "그건 네 잘못이 아니야"라는 말을 들으면 감정이 한결 정리됩니다.</p>
+    <h3>작은 성취를 기록하세요</h3>
+    <p>잔소리를 들은 날일수록 오늘 처리한 업무, 잘한 점을 짧게라도 적어보세요. 부정적인 피드백 하나가 하루 전체의 성과를 지우지 않도록, 스스로 균형을 맞추는 습관입니다.</p>
+    <h3>퇴근 후엔 끊어내세요</h3>
+    <p>업무 메시지를 계속 곱씹는 대신, 정해진 시간 이후에는 알림을 확인하지 않는 나만의 규칙을 만들어보세요. 감정은 물리적으로 그 상황에서 멀어질 때 가장 빨리 정리됩니다.</p>
+  </article>
+
+  <article id="article-3">
+    <h2>부하직원에게 싫은 소리 잘 하는 법 — 상사를 위한 커뮤니케이션 팁</h2>
+    <p>피드백을 주는 입장이 되면 또 다른 어려움이 생깁니다. 너무 부드럽게 말하면 전달이 안 되고, 직설적으로 말하면 관계가 상합니다. 상대가 기분 나쁘지 않게, 그러나 명확하게 전달하는 방법을 정리했습니다.</p>
+    <h3>사실 → 영향 → 요청 순서로 말하기</h3>
+    <p>"이 부분이 늦어지고 있어요(사실) → 다음 단계 진행이 밀리고 있습니다(영향) → 내일까지 마무리해주시면 좋겠어요(요청)" 순서로 말하면 감정이 아니라 상황을 전달하는 대화가 됩니다. "왜 이렇게 늦어?"보다 훨씬 명확하고, 듣는 사람도 방어적으로 반응할 이유가 줄어듭니다.</p>
+    <h3>공개적으로 지적하지 마세요</h3>
+    <p>같은 내용이라도 단둘이 이야기하는 것과 여러 사람 앞에서 지적하는 것은 전혀 다르게 받아들여집니다. 피드백은 최대한 1:1로, 칭찬은 공개적으로 하는 것이 기본입니다.</p>
+    <h3>메신저보다 상황에 맞는 채널을 고르세요</h3>
+    <p>텍스트는 어조가 전달되지 않아 의도보다 더 차갑게 읽히기 쉽습니다. 민감한 피드백일수록 짧은 대화나 통화로 전달하고, 메신저는 이미 합의된 내용을 정리하는 용도로 쓰는 것이 오해를 줄입니다.</p>
+    <p class="cta">보내기 전에 한 번 다시 읽어보는 것만으로도 표현이 많이 달라집니다. <a href="/">이 사이트의 도구</a>에 초안을 붙여넣어 순화된 표현으로 다듬어 보내보세요.</p>
+  </article>
+
+  <article id="article-4">
+    <h2>직장 내 세대차이, 왜 '꼰대'라는 말이 나올까</h2>
+    <p>"꼰대"라는 말은 단순히 나이 많은 사람을 비꼬는 표현이 아닙니다. 자신의 경험을 일반화해서 상대에게 강요하는 태도를 가리키는 말에 가깝습니다. 세대 간 소통이 어려워지는 이유와, 이를 줄이는 방법을 살펴봅니다.</p>
+    <h3>경험의 기준이 다릅니다</h3>
+    <p>"나 때는 이렇게 했다"는 말은 그 시절엔 유효했던 조언일 수 있지만, 지금의 조직 문화·기술 환경·인력 구조는 완전히 다릅니다. 문제는 경험을 나누는 것 자체가 아니라, 그 경험을 지금 상황에 그대로 적용하려는 태도입니다.</p>
+    <h3>질문 없는 지시는 오해를 낳습니다</h3>
+    <p>윗세대는 "알아서 하는 것"을 능력으로, 아랫세대는 "명확한 지시"를 신뢰로 여기는 경향이 있습니다. 같은 상황을 두고 한쪽은 "왜 저렇게 사소한 것까지 물어보지"라고 생각하고, 다른 한쪽은 "왜 아무것도 알려주지 않지"라고 생각합니다. 지시할 때 배경과 이유를 한 문장만 더 붙여도 이 간극이 크게 줄어듭니다.</p>
+    <h3>호칭과 말투도 세대차이의 일부입니다</h3>
+    <p>반말 섞인 지시, 일방적인 톤은 예전엔 자연스러웠을지 몰라도 지금은 권위적으로 느껴지기 쉽습니다. 같은 내용이라도 존댓말과 요청형 문장으로 바꾸는 것만으로 훨씬 부드럽게 전달됩니다.</p>
+    <h3>서로의 기준을 확인하는 대화가 필요합니다</h3>
+    <p>세대차이는 없앨 수 없지만, "저는 이런 방식이 편한데 어떠세요?"라고 한 번씩 물어보는 것만으로도 오해를 줄일 수 있습니다. 정답을 정해두지 않고 서로의 방식을 확인하는 것이 세대 간 소통의 시작입니다.</p>
+  </article>
+
+  <article id="article-5">
+    <h2>메신저로 업무 지시받을 때 오해를 줄이는 방법</h2>
+    <p>텍스트는 표정도, 목소리 톤도 없이 글자만 전달됩니다. 그래서 같은 내용이라도 메신저로 받으면 더 차갑거나 공격적으로 느껴지기 쉽습니다. 오해를 줄이는 몇 가지 방법을 정리했습니다.</p>
+    <h3>감정을 읽지 말고 정보를 읽으세요</h3>
+    <p>"이거 확인 안 했어요?"라는 메시지를 받으면 짜증이 났다고 넘겨짚기 쉽지만, 실제로는 단순히 확인 여부를 묻는 질문일 수 있습니다. 텍스트에는 어조 정보가 없다는 걸 기억하고, 문장을 있는 그대로 업무 정보로만 받아들이는 연습이 필요합니다.</p>
+    <h3>애매하면 추측하지 말고 확인하세요</h3>
+    <p>"이거 알아서 처리해주세요" 같은 지시는 해석이 사람마다 다릅니다. 짐작으로 진행하다 방향이 어긋나면 서로 더 힘들어집니다. "○○ 방식으로 진행하면 될까요?"처럼 구체적으로 되물으면, 상대방 입장에서도 더 명확하게 답할 수 있습니다.</p>
+    <h3>긴 지시는 짧게 요약해서 되돌려주세요</h3>
+    <p>지시를 받은 후 "말씀하신 내용은 A, B, C를 이번 주까지 처리하는 것으로 이해했습니다"처럼 요약해서 확인받으면, 오해를 사전에 걸러낼 수 있습니다. 상대방 입장에서도 제대로 전달됐다는 확신이 생겨 신뢰가 쌓입니다.</p>
+    <h3>감정이 격한 메시지는 시간을 두고 다시 읽으세요</h3>
+    <p>받자마자 욱하는 메시지일수록, 30분 정도 지난 뒤 다시 읽으면 처음과 다르게 읽히는 경우가 많습니다. 급한 답장이 필요하지 않다면 잠깐의 여유를 두는 것만으로도 불필요한 감정 소모를 줄일 수 있습니다.</p>
+    <p class="cta">받은 메시지가 유독 날카롭게 느껴진다면, <a href="/">순화 도구</a>에 붙여넣어 감정을 걷어낸 버전으로 다시 읽어보세요.</p>
+  </article>
+
+  <footer class="footnote">
+    <a href="/">← 잔소리 순화기로 돌아가기</a>
+  </footer>
+</div>
+</body>
+</html>
